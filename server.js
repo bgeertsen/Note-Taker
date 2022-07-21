@@ -22,13 +22,21 @@ function createNewNote(body, noteArray) {
 }
 
 function deleteNote(id, noteArray) {
-    const newArr = noteArray.splice(id, 1);
+   for (let i = 0; i < noteArray.length; i++) {
+    var note = noteArray[i];
+
+    if (note.id === id) {
+        noteArray.splice(i, 1);
+
+    }
+   }
+    
     fs.writeFileSync(
         path.join(__dirname, './db/db.json'),
         JSON.stringify(noteArray, null, 2)
     )
+    return noteArray;
     
-    return newArr;
     
 }
 
@@ -45,14 +53,15 @@ app.get('/api/notes', (req, res) => {
 })
 
 app.post('/api/notes', (req, res) => {
-    // req.body.id = notes.length.toString();
+    req.body.id = notes.length.toString();
 
     const note = createNewNote(req.body, notes)
     res.json(note);
 })
 
 app.delete('/api/notes/:id', (req, res) => {
-    deleteNote(req.params, notes)
+    deleteNote(req.params.id, notes)
+    
     
     res.json(notes);
 })
